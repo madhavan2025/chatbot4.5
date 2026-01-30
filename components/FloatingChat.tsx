@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Chat } from "./chat";
 import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import type { ChatMessage } from "@/lib/types";
 import type { VisibilityType } from "./visibility-selector";
+import { isEmbedMode } from "@/lib/isEmbed";
 
 interface FloatingChatProps {
   chatId: string;
@@ -24,6 +25,14 @@ export const FloatingChat: React.FC<FloatingChatProps> = ({
   autoResume = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+   const [isEmbed, setIsEmbed] = useState(false);
+
+   useEffect(() => {
+    setIsEmbed(isEmbedMode());
+  }, []);
+
+  // 🚫 DO NOT render floating launcher inside iframe
+  if (isEmbed) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-[9999]">
