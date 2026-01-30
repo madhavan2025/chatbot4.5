@@ -1,5 +1,5 @@
 "use client";
-
+import { X } from "lucide-react";
 export function EmbedChatHeader() {
   const closeChat = () => {
     window.parent.postMessage("closeChat", "*");
@@ -13,7 +13,7 @@ export function EmbedChatHeader() {
         className="text-white text-xl leading-none hover:opacity-80"
         aria-label="Close chat"
       >
-        ×
+        <X size={20} />
       </button>
     </div>
   );
