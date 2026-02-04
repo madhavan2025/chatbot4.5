@@ -42,7 +42,21 @@ export const FloatingChat: React.FC<FloatingChatProps> = ({
           onClick={() => setIsOpen(true)}
           className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700"
         >
-          <span className="text-2xl">💬</span>
+          <svg
+  xmlns="http://www.w3.org/2000/svg"
+  className="w-6 h-6"
+  fill="none"
+  viewBox="0 0 24 24"
+  stroke="currentColor"
+  strokeWidth={2}
+>
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M8 10h8m-8 4h5m9-2a9 9 0 11-4.5-7.794L21 3l-1.206 4.5A8.962 8.962 0 0121 12z"
+  />
+</svg>
+
         </button>
       )}
 
