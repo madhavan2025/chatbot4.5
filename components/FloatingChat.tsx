@@ -6,7 +6,7 @@ import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import type { ChatMessage } from "@/lib/types";
 import type { VisibilityType } from "./visibility-selector";
 import { isEmbedMode } from "@/lib/isEmbed";
-
+import Image from "next/image";
 interface FloatingChatProps {
   chatId: string;
   initialMessages?: ChatMessage[];
@@ -40,22 +40,16 @@ export const FloatingChat: React.FC<FloatingChatProps> = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700"
+          className="flex items-center justify-center"
         >
-          <svg
-  xmlns="http://www.w3.org/2000/svg"
-  className="w-6 h-6"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="currentColor"
-  strokeWidth={2}
->
-  <path
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    d="M8 10h8m-8 4h5m9-2a9 9 0 11-4.5-7.794L21 3l-1.206 4.5A8.962 8.962 0 0121 12z"
-  />
-</svg>
+         <Image
+  src="/images/speech-bubble.png"
+  alt="Chat"
+  width={60}
+  height={60}
+  className="object-contain"
+/>
+
 
         </button>
       )}
@@ -64,10 +58,11 @@ export const FloatingChat: React.FC<FloatingChatProps> = ({
       {isOpen && (
         <div className="w-[360px] h-[520px] bg-white border rounded-xl shadow-xl flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white">
-            <span className="font-semibold">Chatbot</span>
-            <button onClick={() => setIsOpen(false)}>✕</button>
-          </div>
+         <div className="flex items-center justify-between px-4 py-3 bg-black text-white">
+  <span className="font-semibold">Chatbot</span>
+  <button onClick={() => setIsOpen(false)}>✕</button>
+</div>
+
 
           {/* Chat Body */}
           <div className="flex-1 overflow-hidden">
