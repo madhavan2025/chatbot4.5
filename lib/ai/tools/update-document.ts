@@ -1,16 +1,47 @@
 import { tool, type UIMessageStreamWriter } from "ai";
-
 import { z } from "zod";
-import { documentHandlersByArtifactKind } from "@/lib/artifacts/server";
-import { getDocumentById } from "@/lib/db/queries";
 import type { ChatMessage } from "@/lib/types";
 
-type UpdateDocumentProps = {
+// Stub: simulate a database document
+async function getDocumentById({ id }: { id: string }) {
+  return {
+    id,
+    title: "Demo Document",
+    kind: "text" as "text" | "code" | "image" | "sheet",
+    content: "This is a demo document content.",
+  };
+}
 
+// Stub: simulate handlers
+const documentHandlersByArtifactKind = [
+  {
+    kind: "text" as const,
+    onUpdateDocument: async ({ document, description, dataStream }: any) => {
+      // Simulate streaming updates to UI
+      dataStream.write({
+        type: "data-suggestion",
+        data: {
+          id: "suggestion-1",
+          originalText: document.content,
+          suggestedText: document.content + " (updated)",
+          description,
+          documentId: document.id,
+          isResolved: false,
+          userId: "ui-stub-user",
+          createdAt: new Date(),
+          documentCreatedAt: new Date(),
+        },
+        transient: true,
+      });
+    },
+  },
+];
+
+type UpdateDocumentProps = {
   dataStream: UIMessageStreamWriter<ChatMessage>;
 };
 
-export const updateDocument = ({  dataStream }: UpdateDocumentProps) =>
+export const updateDocument = ({ dataStream }: UpdateDocumentProps) =>
   tool({
     description: "Update a document with the given description.",
     inputSchema: z.object({
@@ -35,8 +66,7 @@ export const updateDocument = ({  dataStream }: UpdateDocumentProps) =>
       });
 
       const documentHandler = documentHandlersByArtifactKind.find(
-        (documentHandlerByArtifactKind) =>
-          documentHandlerByArtifactKind.kind === document.kind
+        (handler) => handler.kind === document.kind
       );
 
       if (!documentHandler) {
@@ -47,7 +77,6 @@ export const updateDocument = ({  dataStream }: UpdateDocumentProps) =>
         document,
         description,
         dataStream,
-      
       });
 
       dataStream.write({ type: "data-finish", data: null, transient: true });
@@ -55,7 +84,7 @@ export const updateDocument = ({  dataStream }: UpdateDocumentProps) =>
       return {
         id,
         title: document.title,
-        kind: document.kind,
+        kind: document.kind, // already narrowed to "text" | "code" | "image" | "sheet"
         content: "The document has been updated successfully.",
       };
     },
