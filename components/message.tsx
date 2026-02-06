@@ -328,11 +328,12 @@ const PurePreviewMessage = ({
                               Error: {String(part.output.error)}
                             </div>
                           ) : (
-                            <DocumentToolResult
-                              isReadonly={isReadonly}
-                              result={part.output}
-                              type="request-suggestions"
-                            />
+                           <DocumentToolResult
+    isReadonly={isReadonly}
+    result={{ ...part.output, kind: part.output.kind as "text" | "code" | "image" | "sheet" }}
+    type="request-suggestions"
+/>
+
                           )
                         }
                       />
