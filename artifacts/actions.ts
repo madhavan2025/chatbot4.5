@@ -1,8 +1,11 @@
 "use server";
 
-import { getSuggestionsByDocumentId } from "@/lib/db/queries";
-
-export async function getSuggestions({ documentId }: { documentId: string }) {
-  const suggestions = await getSuggestionsByDocumentId({ documentId });
-  return suggestions ?? [];
+// 🔹 UI-only version: no DB
+export async function getSuggestions({
+  documentId,
+}: {
+  documentId: string;
+}) {
+  // Return empty array or mock suggestions
+  return [];
 }

@@ -1,11 +1,10 @@
 import { cookies } from "next/headers";
 import { Suspense } from "react";
-
+import { redirect } from "next/navigation";
 import { Chat } from "@/components/chat";
 import { DataStreamHandler } from "@/components/data-stream-handler";
 import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
-import { getMessagesByChatId } from "@/lib/db/queries";
-import { convertToUIMessages } from "@/lib/utils";
+
 
 export default function Page(props: { params: Promise<{ id: string }> }) {
   return (
@@ -17,10 +16,11 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
 async function ChatPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-
-  // 🔹 Fetch messages only (no auth, no chat ownership)
-  const messagesFromDb = await getMessagesByChatId({ id });
-  const uiMessages = convertToUIMessages(messagesFromDb);
+ const isServerConnected = false;
+  if (!isServerConnected) {
+    redirect("/"); // Next.js will navigate to '/'
+  }
+    const uiMessages: any[] = [];
 
   const cookieStore = cookies();
   const chatModelFromCookie = cookieStore.get("chat-model");

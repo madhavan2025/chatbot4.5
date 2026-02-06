@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCart } from"../app/context/CartContext";
+
 
 type Listing = {
   id: string;
@@ -33,17 +35,16 @@ const DEMO_LISTINGS: Listing[] = [
 
 export function ListingsCarousel() {
   const [index, setIndex] = useState(0);
+  const [added, setAdded] = useState(false);
+
   const total = DEMO_LISTINGS.length;
   const router = useRouter();
+  const { addToCart } = useCart();
 
-  // 🔁 Auto-play every 3 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((i) => (i + 1) % total);
-    }, 3000);
 
-    return () => clearInterval(interval);
-  }, [total]);
+
+
+ 
 
   const prev = () => {
     setIndex((i) => (i === 0 ? total - 1 : i - 1));
@@ -61,17 +62,25 @@ export function ListingsCarousel() {
 };
 
 
+
+
+
+const handleAddToCart = () => {
+  addToCart(listing);
+  setAdded(true);
+};
+
   return (
     <div className="w-full max-w-4xl rounded-xl border bg-background p-4">
       <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
-        Featured Listings (Demo)
+        Featured Listings
       </h3>
       <div className="relative overflow-hidden rounded-lg group">
   <img
     key={listing.id}
     src={listing.image}
     alt={listing.title}
-    className="h-64 w-full object-cover transition-opacity duration-500"
+    className="h-44 w-full object-cover transition-opacity duration-500 cursor-pointer"
      onClick={() => handleClick(listing)}
  />
 
@@ -110,15 +119,30 @@ export function ListingsCarousel() {
   </button>
 </div>
 
-<div className="mt-3 flex items-center justify-between">
+<div className="mt-2 flex items-center justify-between">
   <div>
     <p className="font-medium">{listing.title}</p>
     <p className="text-sm text-muted-foreground">{listing.price}</p>
   </div>
 
-  <span className="text-xs text-muted-foreground">
-    {index + 1} / {total}
-  </span>
+{added ? (
+  <button
+    onClick={() => router.push("/cart")}
+    className="text-xs underline text-black hover:text-gray-700"
+  >
+    View cart
+  </button>
+) : (
+  <button
+    onClick={handleAddToCart}
+    className="rounded-md bg-black px-3 py-1 text-xs text-white hover:bg-gray-800"
+  >
+    Add to cart
+  </button>
+)}
+
+
+
 </div>
 
       

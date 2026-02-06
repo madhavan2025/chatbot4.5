@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-
+import { CartProvider } from "./context/CartContext"
 import "./globals.css";
 
 
@@ -71,17 +71,21 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          enableSystem
-        >
-          <Toaster position="top-center" />
-          {children}
-        </ThemeProvider>
-      </body>
+    <body className="antialiased">
+  <ThemeProvider
+    attribute="class"
+    defaultTheme="system"
+    disableTransitionOnChange
+    enableSystem
+  >
+    <CartProvider>
+      {children}
+    </CartProvider>
+
+    <Toaster position="top-center" />
+  </ThemeProvider>
+</body>
+
     </html>
   );
 }
