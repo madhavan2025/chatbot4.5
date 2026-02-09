@@ -91,11 +91,11 @@ const handleAddToCart = () => {
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 text-gray-700 hover:text-gray-900"
+      className="h-7 w-7 text-white drop-shadow-lg"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={3}
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
@@ -108,11 +108,11 @@ const handleAddToCart = () => {
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 text-gray-700 hover:text-gray-900"
+      className="h-7 w-7 text-white drop-shadow-lg"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={3}
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
     </svg>

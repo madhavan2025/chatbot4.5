@@ -80,6 +80,7 @@ function PureMessages({
               msg.parts?.some(
                 (part) => "state" in part && part.state === "approval-responded"
               )
+              
             ) && <ThinkingMessage />}
 
           <div
