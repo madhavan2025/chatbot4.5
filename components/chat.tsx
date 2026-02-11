@@ -6,6 +6,8 @@ import type { VisibilityType } from "./visibility-selector";
 import { ChatStatus } from "ai";
 
 import { ListingsCarousel } from "@/components/listings-carousel";
+import { ContentListing } from "../components/ContentListing";
+import { MiniForm } from "../components/MiniForm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,10 +43,13 @@ export function Chat({
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [showListings, setShowListings] = useState(false);
+  const [showContentList, setShowContentList] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
    const status: ChatStatus = "ready"; 
    const addToolApprovalResponse = async () => {};
-const regenerate = async () => {};
+  const regenerate = async () => {};
 
 const selectedModelId = initialChatModel;
 const stop = async () => {};
@@ -96,6 +101,14 @@ const selectedVisibilityType = initialVisibilityType; // UI stub
     addAssistantMessage("Here are some products you might like 👇");
     return;
   }
+  
+   if (lower.includes("show") && (lower.includes("form") || lower.includes("forms"))) {
+    setShowForm(true);
+    addAssistantMessage("Please share your details 👇");
+    return;
+  }
+
+    if (lower.includes("recommend")) setShowContentList(true);
 
   if (lower.includes("hide") || lower.includes("close")) {
     setShowListings(false);
@@ -145,10 +158,6 @@ const lastUserMessage = [...messages]
 const lastUserText = getMessageText(lastUserMessage).toLowerCase();
 
 
-
-
-
-
 useEffect(() => {
   if (!lastUserText) return;
 
@@ -160,12 +169,16 @@ useEffect(() => {
   ) {
     setShowListings(true);
   }
+  if (lastUserText.includes("show") && (lastUserText.includes("form") || lastUserText.includes("forms"))) {
+    setShowForm(true);
+  }
 
   if (
     lastUserText.includes("hide") ||
     lastUserText.includes("close")
   ) {
     setShowListings(false);
+    setShowForm(false);
   }
 }, [lastUserText]);
 
@@ -175,45 +188,66 @@ useEffect(() => {
 
   return (
     <>
-      <div className="flex h-dvh min-w-0 flex-col bg-background">
-        {showListings && (
-          <div className="mx-auto w-full max-w-4xl px-2 pt-3 md:px-4">
-            <ListingsCarousel />
-          </div>
-        )}
+<div className="flex h-full min-w-0 flex-col bg-background">
+  
+  
+   
+   
+<div className="flex-1 overflow-y-auto min-h-0">
+   <>
+            {showListings && (
+              <div className="px-2 pt-3 space-y-3">
+                <ListingsCarousel />
+                <ContentListing />
+              </div>
+            )}
 
-        <Messages
-          chatId={id}
-          isArtifactVisible={false}
-          isReadonly={isReadonly}
-          messages={messages}
-          setMessages={setMessages}
-          status={status}
-           addToolApprovalResponse={addToolApprovalResponse}
-          votes={votes}
-          regenerate={regenerate}
-          selectedModelId={selectedModelId}
-        />
+            {showForm && (
+              <div className="px-2 pt-3">
+                <MiniForm />
+              </div>
+            )}
+          </>
 
-        <div className="sticky bottom-0 mx-auto flex w-full max-w-4xl gap-2 bg-background px-2 pb-3 md:px-4 md:pb-4">
-          {!isReadonly && (
-            <MultimodalInput
-              chatId={id}
-              input={input}
-              messages={messages}
-              attachments={attachments}
-              setInput={setInput}
-              setMessages={setMessages}
-              setAttachments={setAttachments}
-              sendMessage={sendMessage}
-              status={status}
-              stop={stop} 
-  selectedVisibilityType={selectedVisibilityType} 
-  selectedModelId={selectedModelId}
-            />
-          )}
-        </div>
-      </div>
+  <Messages
+    chatId={id}
+    isArtifactVisible={false}
+    isReadonly={isReadonly}
+    messages={messages}
+    setMessages={setMessages}
+    status={status}
+    addToolApprovalResponse={addToolApprovalResponse}
+    votes={votes}
+    regenerate={regenerate}
+    selectedModelId={selectedModelId}
+  />
+
+  <div className="h-24" />
+</div>
+
+    
+
+  {/* Sticky input */}
+  {!isReadonly && (
+    <div className="sticky bottom-0 mx-auto w-full max-w-4xl bg-background px-2 pb-3 md:px-4 md:pb-4">
+      <MultimodalInput
+        chatId={id}
+        input={input}
+        messages={messages}
+        attachments={attachments}
+        setInput={setInput}
+        setMessages={setMessages}
+        setAttachments={setAttachments}
+        sendMessage={sendMessage}
+        status={status}
+        stop={stop}
+        selectedVisibilityType={selectedVisibilityType}
+        selectedModelId={selectedModelId}
+      />
+    </div>
+  )}
+</div>
+
 
      <Artifact
   chatId={id}
