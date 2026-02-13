@@ -7,7 +7,7 @@ import { ChatStatus } from "ai";
 
 import { ListingsCarousel } from "@/components/listings-carousel";
 import { ContentListing } from "../components/ContentListing";
-import { MiniForm } from "../components/MiniForm";
+import { MiniForm } from "./MiniForm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +22,19 @@ import {
 import { Artifact } from "./artifact";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
+
+
+async function getProducts() {
+  const res = await fetch("/api/products");
+  if (!res.ok) throw new Error("Failed to fetch products");
+  return res.json();
+}
+
+async function getForm(id: string) {
+  const res = await fetch(`/api/forms/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch form");
+  return res.json();
+}
 
 export function Chat({
   id,
@@ -45,6 +58,9 @@ export function Chat({
   const [showListings, setShowListings] = useState(false);
   const [showContentList, setShowContentList] = useState(false);
   const [showForm, setShowForm] = useState(false);
+    const [products, setProducts] = useState<any[]>([]);
+      const [formConfig, setFormConfig] = useState<any>(null);
+      const [contents, setContents] = useState<any[]>([]);
 
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
    const status: ChatStatus = "ready"; 
@@ -59,6 +75,35 @@ const selectedVisibilityType = initialVisibilityType; // UI stub
 const [listingType, setListingType] = useState<"type1" | "type2" | null>(null);
 
   /* ---------------- NO-OP UI HANDLERS ---------------- */
+
+useEffect(() => {
+    async function fetchData() {
+      try {
+        const fetchedProducts = await getProducts();
+        setProducts(fetchedProducts);
+
+        const fetchedForm = await getForm("contactForm");
+        setFormConfig(fetchedForm);
+      } catch (error) {
+        console.error("Failed to fetch products or form:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+     const addAssistantMessage = (text: string) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        parts: [{ type: "text", text }],
+      },
+    ]);
+  };
+
+ 
 
   const sendMessage = async (
   message?: {
@@ -118,11 +163,18 @@ if (lower.includes("show contents")) {
   return;
 }
   
-   if (lower.includes("show") && (lower.includes("form") || lower.includes("forms"))) {
-    setShowForm(true);
-    addAssistantMessage("Please share your details 👇");
-    return;
-  }
+   if (
+  lower.includes("show") &&
+  (lower.includes("form") || lower.includes("forms"))
+) {
+  setShowListings(false);
+  setShowContentList(false);
+  setShowForm(true);
+
+  addAssistantMessage("Here is the form 👇");
+  return;
+}
+
 
     if (lower.includes("recommend")) setShowContentList(true);
 
@@ -135,17 +187,8 @@ if (lower.includes("show contents")) {
   addAssistantMessage("Hi 😊 What can I help you with today?");
 };
 
-function addAssistantMessage(text: string) {
-  setMessages((prev) => [
-    ...prev,
-    {
-      id: crypto.randomUUID(),
-      role: "assistant",
-      content: text,
-      parts: [{ type: "text", text }],
-    },
-  ]);
-}
+
+
 
 
 function getMessageText(message?: ChatMessage): string {
@@ -212,21 +255,29 @@ useEffect(() => {
    
 <div className="flex-1 overflow-y-auto min-h-0">
    <>
-            {showListings && listingType && (
+            {showListings && listingType && products.length > 0 && (
   <div className="px-2 pt-3 space-y-3">
-    <ListingsCarousel type={listingType} />
+     <ListingsCarousel
+      products={products}
+      style={listingType}
+    />
   </div>
 )}
 
 {showContentList && (
    <div className="px-2 pt-3">
-<ContentListing />
-</div>)}
-            {showForm && (
-              <div className="px-2 pt-3">
-                <MiniForm />
-              </div>
-            )}
+  <ContentListing
+    items={contents}
+    count={contents.length}
+  />
+  </div>
+)}
+
+
+            {showForm && formConfig &&( 
+            <div className="px-2 pt-3">
+            <MiniForm config={formConfig} />
+            </div>)}
           </>
 
   <Messages
