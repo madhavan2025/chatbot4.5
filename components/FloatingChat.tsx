@@ -27,11 +27,32 @@ export const FloatingChat: React.FC<FloatingChatProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
    const [isEmbed, setIsEmbed] = useState(false);
-     const [isFullScreen, setIsFullScreen] = useState(false);
+  const [theme, setTheme] = useState<any>(null);
+const [loadingTheme, setLoadingTheme] = useState(true);
+const [isFullScreen, setIsFullScreen] = useState(false);
+
    useEffect(() => {
     setIsEmbed(isEmbedMode());
   }, []);
 
+
+  useEffect(() => {
+  const loadTheme = async () => {
+    try {
+      const res = await fetch("/api/chat-theme");
+      const data = await res.json();
+      setTheme(data);
+    } catch (err) {
+      console.error("Theme load failed", err);
+    } finally {
+      setLoadingTheme(false);
+    }
+  };
+
+  loadTheme();
+}, []);
+
+if (loadingTheme) return null;
   // 🚫 DO NOT render floating launcher inside iframe
   if (isEmbed) return null;
 
@@ -43,13 +64,19 @@ export const FloatingChat: React.FC<FloatingChatProps> = ({
           onClick={() => setIsOpen(true)}
           className="flex items-center justify-center"
         >
-         <Image
+    <Image
   src="/images/comment.png"
   alt="Chat"
-  width={60}
-  height={60}
-  className="object-contain"
+  width={theme?.launcherIconSize || 60}
+  height={theme?.launcherIconSize || 60}
+  style={{
+    backgroundColor: theme?.launcherIconBg,
+    borderRadius: "50%",
+    padding: "10px"
+  }}
 />
+
+
 
 
         </button>
@@ -57,16 +84,32 @@ export const FloatingChat: React.FC<FloatingChatProps> = ({
 
       {/* Floating Chat */}
       {isOpen && (
-          <div
-          className={`bg-white border shadow-2xl flex flex-col overflow-hidden transition-all duration-300
-            ${
-              isFullScreen
-                ? "fixed inset-0 rounded-none"
-                : "w-[360px] h-[520px] rounded-xl"
-            }
-          `}
-        >
-       <div className="flex items-center justify-between px-4 py-3 bg-[#6FA8E8] text-white">
+       <div
+  className={`flex flex-col overflow-hidden transition-all duration-300
+    ${
+      isFullScreen
+        ? "fixed inset-0"
+        : "w-[360px] h-[520px]"
+    }
+  `}
+  style={{
+    backgroundColor: theme?.windowBg,
+    border: `1px solid ${theme?.borderColor}`,
+    borderRadius: isFullScreen ? "0px" : theme?.borderRadius,
+    boxShadow: theme?.shadow
+  }}
+>
+
+
+    <div
+  className="flex items-center justify-between px-4 py-3"
+  style={{
+    backgroundColor: theme?.headerBg,
+    color: theme?.headerTextColor
+  }}
+>
+
+
   <span className="font-semibold">Chatbot</span>
       <div className="flex items-center gap-3">
               {/* Expand / Minimize Button */}
