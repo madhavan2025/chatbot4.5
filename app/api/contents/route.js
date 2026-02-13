@@ -2,10 +2,15 @@ import clientPromise from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const client = await clientPromise;
-  const db = client.db("floating");
+  try {
+    const client = await clientPromise;
+    const db = client.db("floating");
 
-  const products = await db.collection("contents").find({}).toArray();
+    const contents = await db.collection("contents").find({}).toArray();
 
-  return NextResponse.json(contents);
+    return NextResponse.json(contents || []);
+  } catch (err) {
+    console.error("Failed to fetch contents:", err);
+    return NextResponse.json({ error: "Failed to fetch contents" }, { status: 500 });
+  }
 }
