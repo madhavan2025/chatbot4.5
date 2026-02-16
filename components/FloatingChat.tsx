@@ -36,12 +36,16 @@ const [isFullScreen, setIsFullScreen] = useState(false);
   }, []);
 
 
-  useEffect(() => {
+ useEffect(() => {
   const loadTheme = async () => {
     try {
       const res = await fetch("/api/chat-theme");
       const data = await res.json();
-      setTheme(data);
+
+      console.log("Theme API Response:", data); // 👈 ADD THIS
+
+      setTheme(Array.isArray(data) ? data[0] : data);
+
     } catch (err) {
       console.error("Theme load failed", err);
     } finally {
@@ -51,6 +55,7 @@ const [isFullScreen, setIsFullScreen] = useState(false);
 
   loadTheme();
 }, []);
+
 
 if (loadingTheme) return null;
   // 🚫 DO NOT render floating launcher inside iframe
@@ -64,17 +69,23 @@ if (loadingTheme) return null;
           onClick={() => setIsOpen(true)}
           className="flex items-center justify-center"
         >
-    <Image
-  src="/images/comment.png"
-  alt="Chat"
-  width={theme?.launcherIconSize || 60}
-  height={theme?.launcherIconSize || 60}
-  style={{
-    backgroundColor: theme?.launcherIconBg,
-    borderRadius: "50%",
-    padding: "10px"
-  }}
-/>
+  {theme?.chatIcon && (
+  <Image
+    src={theme.chatIcon}
+    alt="Chat"
+    width={theme.chatIconSize}
+    height={theme.chatIconSize}
+    unoptimized
+    style={{
+      backgroundColor: theme.chatIconBg,
+      borderRadius: theme.borderRadius,
+      objectFit: "contain",
+      
+    }}
+  />
+)}
+
+
 
 
 

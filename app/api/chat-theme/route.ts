@@ -6,11 +6,12 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db("floating");
 
-    const chatThemes = await db.collection("ChatThemes").find({}).toArray();
+    const theme = await db.collection("ChatThemes").findOne({ name: "default" });
 
-    return NextResponse.json(chatThemes);
+    return NextResponse.json(theme);
   } catch (err) {
-    console.error("Failed to fetch forms:", err);
-    return NextResponse.json({ error: "Failed to fetch forms" }, { status: 500 });
+    console.error("Failed to fetch theme:", err);
+    return NextResponse.json({ error: "Failed to fetch theme" }, { status: 500 });
   }
 }
+
