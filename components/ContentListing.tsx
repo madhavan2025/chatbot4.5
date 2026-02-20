@@ -17,7 +17,7 @@ export function ContentListing({ items, count }: ContentListingProps) {
   const router = useRouter();
 
   return (
-    <div className="rounded-xl border bg-background p-4 space-y-3">
+    <div className="rounded-xl border  p-4 space-y-3">
       <h3 className="text-sm font-semibold text-muted-foreground">
         Recommended for you
       </h3>

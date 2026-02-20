@@ -252,15 +252,30 @@ useEffect(() => {
 
   return (
     <>
-<div className="flex h-full min-w-0 flex-col ">
+<div className="flex h-full min-w-0 flex-col items-center ">
   
   
    
    
 <div className="flex-1 overflow-y-auto min-h-0">
-   <>
-  {showListings && listingType && (
-  <div className="px-2 pt-3 space-y-3">
+  <div className="mx-auto w-full max-w-4xl flex flex-col">
+      
+
+  <Messages
+    chatId={id}
+    isArtifactVisible={false}
+    isReadonly={isReadonly}
+    messages={messages}
+    setMessages={setMessages}
+    status={status}
+    addToolApprovalResponse={addToolApprovalResponse}
+    votes={votes}
+    regenerate={regenerate}
+    selectedModelId={selectedModelId}
+  />
+
+ {showListings && listingType && (
+  <div className="px-2 pt-3 ">
     <ListingsCarousel
       style={listingType} // type1 or type2
     />
@@ -282,24 +297,10 @@ useEffect(() => {
             <div className="px-2 pt-3">
             <MiniForm config={formConfig} />
             </div>)}
-          </>
-
-  <Messages
-    chatId={id}
-    isArtifactVisible={false}
-    isReadonly={isReadonly}
-    messages={messages}
-    setMessages={setMessages}
-    status={status}
-    addToolApprovalResponse={addToolApprovalResponse}
-    votes={votes}
-    regenerate={regenerate}
-    selectedModelId={selectedModelId}
-  />
-
-  <div className="h-24" />
+     
+  
 </div>
-
+</div>
     
 
   {/* Sticky input */}

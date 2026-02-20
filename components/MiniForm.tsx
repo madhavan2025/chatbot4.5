@@ -96,7 +96,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border bg-background p-4 space-y-3"
+      className="rounded-xl border  p-4 space-y-3"
     >
       <h3 className="text-sm font-semibold">{config.title}</h3>
 

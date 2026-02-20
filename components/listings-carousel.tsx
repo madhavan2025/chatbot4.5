@@ -254,7 +254,7 @@ useEffect(() => {
   );
   };
   return (
-    <div className="w-full max-w-4xl p-4 bg-white rounded-xl border">
+    <div className="w-full max-w-4xl p-4  rounded-xl border">
       <h3 className="mb-3 text-sm font-semibold text-gray-500">
         Featured Listings
       </h3>
