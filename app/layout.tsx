@@ -71,7 +71,7 @@ export default function RootLayout({
           }}
         />
       </head>
-    <body className="antialiased">
+    <body className="antialiased h-full">
   <ThemeProvider
     attribute="class"
     defaultTheme="system"

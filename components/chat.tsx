@@ -66,7 +66,7 @@ export function Chat({
       const [contents, setContents] = useState<any[]>([]);
 
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
-   const status: ChatStatus = "ready"; 
+ const [status, setStatus] = useState<ChatStatus>("ready"); 
    const addToolApprovalResponse = async () => {};
   const regenerate = async () => {};
 
@@ -96,20 +96,7 @@ useEffect(() => {
     fetchData();
   }, []);
 
-     const addAssistantMessage = (text: string) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        parts: [{ type: "text", text }],
-      },
-    ]);
-  };
-
- 
-
-  const sendMessage = async (
+   const sendMessage = async (
   message?: {
     role?: "user" | "assistant" | "system";
     parts?: ChatMessage["parts"];
@@ -117,6 +104,7 @@ useEffect(() => {
   }
 ) => {
   if (!message) return;
+  setStatus("submitted");
 
   const text =
     message.text ??
@@ -128,68 +116,67 @@ useEffect(() => {
 
   const lower = text.toLowerCase();
 
-  setMessages((prev) => [
-    ...prev,
-    {
-      id: crypto.randomUUID(),
-      role: message.role ?? "user",
-      parts:
-        message.parts ??
-        (message.text
-          ? [{ type: "text", text: message.text }]
-          : []),
-    },
-  ]);
+  // 1. Create the User Message object
+  const userMessage: ChatMessage = {
+    id: crypto.randomUUID(),
+    role: message.role ?? "user",
+    parts: message.parts ?? (message.text ? [{ type: "text", text: message.text }] : []),
+    metadata: { createdAt: new Date().toISOString() },
+  };
 
- if (lower.includes("show products type1")) {
-  setListingType("type1");
-  setShowListings(true);
-  setShowContentList(false);
-  setShowForm(false);
-  addAssistantMessage("Here is a product you might like 👇");
-  return;
-}
+  // 2. Logic to determine Assistant Response and UI Toggles
+  let assistantText = "No results found.";
+  let displayListings = false;
+  let displayContent = false;
+  let displayForm = false;
+  let newListingType: "type1" | "type2" | null = null;
 
-if (lower.includes("show products type2")) {
-  setListingType("type2");
-  setShowListings(true);
-  setShowContentList(false);
-  setShowForm(false);
-  addAssistantMessage("Here are some products you might like 👇");
-  return;
-}
-
-if (lower.includes("show contents")) {
-  setShowListings(false);
-  setShowContentList(true);
-  setShowForm(false);
-  addAssistantMessage("Here are some contents 👇");
-  return;
-}
-  
-   if (
-  lower.includes("show") &&
-  (lower.includes("form") || lower.includes("forms"))
-) {
-  setShowListings(false);
-  setShowContentList(false);
-  setShowForm(true);
-
-  addAssistantMessage("Here is the form 👇");
-  return;
-}
-
-
-    if (lower.includes("recommend")) setShowContentList(true);
-
-  if (lower.includes("hide") || lower.includes("close")) {
-    setShowListings(false);
-    addAssistantMessage("I’ve hidden the listings. What would you like to do next?");
-    return;
+  if (lower === "hi" || lower === "hello") {
+    assistantText = "Hi 😊 What can I help you with today?";
+  } 
+  else if (lower.includes("show products type1")) {
+    assistantText = "Here is a product you might like 👇";
+    displayListings = true;
+    newListingType = "type1";
+  } 
+  else if (lower.includes("show products type2")) {
+    assistantText = "Here are some products you might like 👇";
+    displayListings = true;
+    newListingType = "type2";
+  } 
+  else if (lower.includes("show contents") || lower.includes("recommend")) {
+    assistantText = "Here are some contents 👇";
+    displayContent = true;
+  } 
+  else if (lower.includes("show") && (lower.includes("form") || lower.includes("forms"))) {
+    assistantText = "Here is the form 👇";
+    displayForm = true;
+  } 
+  else if (lower.includes("hide") || lower.includes("close")) {
+    assistantText = "I’ve hidden the listings. What would you like to do next?";
+    // All displays remain false
   }
 
-  addAssistantMessage("Hi 😊 What can I help you with today?");
+  // 3. Create Assistant Message object
+  const assistantMessage: ChatMessage = {
+    id: crypto.randomUUID(),
+    role: "assistant",
+    parts: [{ type: "text", text: assistantText }],
+    metadata: { createdAt: new Date().toISOString() },
+  };
+
+  // 4. Update Chat History (Adding BOTH messages at once prevents the empty screen)
+  setMessages((prev) => [...prev, userMessage, assistantMessage]);
+
+  // 5. Update UI Visibility States
+  setShowListings(displayListings);
+  setListingType(newListingType);
+  setShowContentList(displayContent);
+  setShowForm(displayForm);
+  
+  setStatus("ready");
 };
+  
 
 
 
