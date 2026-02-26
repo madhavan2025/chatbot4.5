@@ -40,7 +40,7 @@ export function Chat({
   initialChatModel,
   initialVisibilityType,
   isReadonly,
-  theme,
+
 }: {
   id: string;
   initialMessages: ChatMessage[];
@@ -48,7 +48,7 @@ export function Chat({
   initialVisibilityType: VisibilityType;
   isReadonly: boolean;
   autoResume?: boolean; // ✅ optional in type
-  theme:any;
+  
 }) {
   /* ---------------- UI STATE ONLY ---------------- */
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
@@ -256,7 +256,7 @@ useEffect(() => {
     votes={votes}
     regenerate={regenerate}
     selectedModelId={selectedModelId}
-    theme={theme}
+   
   />
 
  {showListings && listingType && (
